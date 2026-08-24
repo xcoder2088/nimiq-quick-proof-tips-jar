@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NIM Tip Jar — QuickProof</title>
+<meta name="theme-color" content="#061A3A">
+<style>
+    :root {
+        --bg: #ffffff;
+        --bg-soft: #F2FAF4;
+        --navy: #061A3A;
+        --green: #017424;
+        --green-deep: #0A4A1C;
+        --green-neon: #00F84A;
+        --green-border: #BFE8C8;
+        --green-hover: #E5F6E9;
+        --text: #111827;
+        --text-soft: #6B7280;
+        --border: #E5E7EB;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: var(--bg-soft);
+        color: var(--text);
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 32px 20px calc(32px + env(safe-area-inset-bottom));
+    }
+
+    .wrap {
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--navy);
+        background: #fff;
+        border: 1px solid var(--border);
+        padding: 5px 12px 5px 5px;
+        border-radius: 999px;
+        margin-bottom: 18px;
+    }
+
+    .badge img {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        display: block;
+    }
+
+    .hero-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    h1 {
+        font-size: 26px;
+        margin: 0 0 6px;
+        letter-spacing: -0.01em;
+        color: var(--navy);
+    }
+
+    .subtitle {
+        font-size: 15px;
+        color: var(--text-soft);
+        line-height: 1.5;
+        margin: 0 0 28px;
+    }
+
+    .card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 22px;
+        margin-bottom: 16px;
+    }
+
+    .amounts {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .amount-btn {
+        border: 1.5px solid var(--green-border);
+        background: var(--bg-soft);
+        color: var(--green);
+        font-size: 15px;
+        font-weight: 700;
+        padding: 14px 6px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: .12s;
+    }
+
+    .amount-btn:hover {
+        border-color: var(--green);
+        background: var(--green-hover);
+    }
+
+    .amount-btn.selected {
+        background: var(--green);
+        border-color: var(--green-deep);
+        color: #fff;
+    }
+
+    .custom-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 10px 14px;
+        margin-bottom: 18px;
+    }
+
+    .custom-row input {
+        border: none;
+        outline: none;
+        font-size: 15px;
+        width: 100%;
+        color: var(--text);
+        font-weight: 600;
+        background: transparent;
+    }
+
+    .custom-row span {
+        font-size: 13px;
+        color: var(--text-soft);
+        font-weight: 700;
+    }
+
+    .send-btn {
+        width: 100%;
+        border: none;
+        background: var(--green);
+        color: #fff;
+        font-size: 16px;
+        font-weight: 800;
+        padding: 15px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: .12s;
+    }
+
+    .send-btn:disabled {
+        opacity: .5;
+        cursor: not-allowed;
+    }
+
+    .send-btn:not(:disabled):hover {
+        background: var(--green-deep);
+    }
+
+    .status {
+        margin-top: 14px;
+        font-size: 13.5px;
+        line-height: 1.5;
+        text-align: center;
+        min-height: 18px;
+    }
+
+    .status.ok { color: var(--green); font-weight: 600; }
+    .status.err { color: #B3261E; font-weight: 600; }
+    .status.info { color: var(--text-soft); }
+
+    .fallback {
+        text-align: center;
+        padding: 10px 4px 4px;
+    }
+
+    .fallback p {
+        font-size: 14px;
+        color: var(--text-soft);
+        line-height: 1.6;
+        margin: 0 0 18px;
+    }
+
+    .fallback a.open-btn {
+        display: inline-block;
+        background: var(--navy);
+        color: #fff;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 14px;
+        padding: 13px 22px;
+        border-radius: 12px;
+    }
+
+    footer {
+        text-align: center;
+        font-size: 12px;
+        color: var(--text-soft);
+        margin-top: 8px;
+        line-height: 1.6;
+    }
+
+    footer a { color: var(--green); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+    <span class="badge">
+        <img src="/static/icons/quickproof-logo-512.png" alt="">
+        QuickProof
+    </span>
+    <img class="hero-icon" src="/static/icons/tip-jar-icon-512.png" alt="Tip jar">
+    <h1>Tip the developer</h1>
+    <p class="subtitle" id="subtitle">
+        QuickProof is a free tool for logistics teams. If it's saving you time,
+        a small NIM tip helps keep it running and improving.
+    </p>
+
+    <!-- ================================================
+         Shown when running inside Nimiq Pay
+    ================================================= -->
+    <div class="card" id="tipCard" style="display:none;">
+
+        <div class="amounts" id="amountButtons">
+            <button type="button" class="amount-btn" data-amount="1">1 NIM</button>
+            <button type="button" class="amount-btn" data-amount="5">5 NIM</button>
+            <button type="button" class="amount-btn" data-amount="10">10 NIM</button>
+        </div>
+
+        <div class="custom-row">
+            <input type="number" id="customAmount" placeholder="Custom amount" min="0" step="0.01" inputmode="decimal">
+            <span>NIM</span>
+        </div>
+
+        <button type="button" class="send-btn" id="sendButton" disabled>
+            Send Tip
+        </button>
+
+        <div class="status info" id="statusText"></div>
+
+    </div>
+
+    <!-- ================================================
+         Shown when opened in a regular browser
+         (not inside Nimiq Pay's WebView)
+    ================================================= -->
+    <div class="card fallback" id="fallbackCard" style="display:none;">
+        <p>
+            This mini app runs inside <strong>Nimiq Pay</strong>. Open it there to send a NIM tip.
+        </p>
+        <a class="open-btn" id="openInNimiqPayLink" href="#">
+            Open in Nimiq Pay
+        </a>
+    </div>
+
+    <footer>
+        Part of <a href="https://shipping.quickquotetool.ca" target="_blank" rel="noopener">QuickProof</a>
+        · Built for the Nimiq Mini Apps Competition
+    </footer>
+
+</div>
+
+<script type="module">
+    // ==============================================
+    // CONFIG
+    // ==============================================
+
+    // TODO(brad): replace with your actual NIM receiving address
+    // before this ever goes live.
+    const RECIPIENT_ADDRESS = "NQXX 0000 0000 0000 0000 0000 0000 0000 0000";
+    const APP_NAME = "QuickProof Tip Jar";
+
+    // The deeplink used by the fallback "Open in Nimiq Pay" button when
+    // this page is opened in a normal browser instead of inside Nimiq Pay.
+    // Replace MINIAPP_HOST once this is deployed to its real domain.
+    const MINIAPP_HOST = window.location.host;
+    const NIMIQ_PAY_DEEPLINK = `nimiqpay://miniapp?url=${encodeURIComponent(window.location.origin)}`;
+
+
+    // ==============================================
+    // ELEMENTS
+    // ==============================================
+
+    const tipCard = document.getElementById("tipCard");
+    const fallbackCard = document.getElementById("fallbackCard");
+    const openInNimiqPayLink = document.getElementById("openInNimiqPayLink");
+    const amountButtons = document.getElementById("amountButtons");
+    const customAmount = document.getElementById("customAmount");
+    const sendButton = document.getElementById("sendButton");
+    const statusText = document.getElementById("statusText");
+
+    openInNimiqPayLink.href = NIMIQ_PAY_DEEPLINK;
+
+    let selectedAmount = null;
+    let nimiq = null;
+
+
+    // ==============================================
+    // AMOUNT SELECTION
+    // ==============================================
+
+    amountButtons.addEventListener("click", (e) => {
+        const btn = e.target.closest(".amount-btn");
+        if (!btn) return;
+
+        customAmount.value = "";
+
+        [...amountButtons.children].forEach((b) => b.classList.remove("selected"));
+        btn.classList.add("selected");
+
+        selectedAmount = parseFloat(btn.dataset.amount);
+        sendButton.disabled = false;
+    });
+
+    customAmount.addEventListener("input", () => {
+        [...amountButtons.children].forEach((b) => b.classList.remove("selected"));
+
+        const value = parseFloat(customAmount.value);
+        if (!isNaN(value) && value > 0) {
+            selectedAmount = value;
+            sendButton.disabled = false;
+        } else {
+            selectedAmount = null;
+            sendButton.disabled = true;
+        }
+    });
+
+
+    // ==============================================
+    // SEND TIP
+    //
+    // Confirmed via nimiq.dev's official mini app tutorial and the
+    // Eligioo/nimiq-mini-app-demo reference repo: the Nimiq provider
+    // exposes sendBasicTransaction(tx) to send NIM to a recipient.
+    // Values are in Luna (1 NIM = 100,000 Luna).
+    // ==============================================
+
+    async function sendTip() {
+        if (!nimiq || !selectedAmount) return;
+
+        sendButton.disabled = true;
+        setStatus("Waiting for confirmation…", "info");
+
+        try {
+            const result = await nimiq.sendBasicTransaction({
+                recipient: RECIPIENT_ADDRESS,
+                value: Math.round(selectedAmount * 1e5), // NIM -> Luna
+            });
+
+            setStatus("Thank you for the tip! 🎉", "ok");
+            console.log("Tip sent:", result);
+
+        } catch (error) {
+            if (error && error.message === "Request was cancelled") {
+                setStatus("Tip cancelled.", "info");
+            } else {
+                setStatus("Something went wrong. Please try again.", "err");
+                console.error(error);
+            }
+        } finally {
+            sendButton.disabled = !selectedAmount;
+        }
+    }
+
+    sendButton.addEventListener("click", sendTip);
+
+    function setStatus(text, kind) {
+        statusText.textContent = text;
+        statusText.className = "status " + (kind || "info");
+    }
+
+
+    // ==============================================
+    // INIT — detect Nimiq Pay vs. regular browser
+    // ==============================================
+
+    async function boot() {
+        if (!window.nimiqPay) {
+            fallbackCard.style.display = "block";
+            tipCard.style.display = "none";
+            return;
+        }
+
+        try {
+            const { init } = await import("https://cdn.jsdelivr.net/npm/@nimiq/mini-app-sdk/+esm");
+            nimiq = await init();
+
+            tipCard.style.display = "block";
+            fallbackCard.style.display = "none";
+
+        } catch (error) {
+            console.error("Failed to init Nimiq Mini App SDK:", error);
+            fallbackCard.style.display = "block";
+            tipCard.style.display = "none";
+        }
+    }
+
+    boot();
+</script>
+
+</body>
+</html>
