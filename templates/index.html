@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NIM Tip Jar — QuickProof</title>
 <meta name="theme-color" content="#061A3A">
+<link rel="icon" type="image/png" sizes="512x512" href="/static/icons/tip-jar-icon-512.png">
+<link rel="apple-touch-icon" href="/static/icons/tip-jar-icon-512.png">
 <style>
     :root {
         --bg: #ffffff;
@@ -259,7 +261,9 @@
     ================================================= -->
     <div class="card fallback" id="fallbackCard" style="display:none;">
         <p>
-            This mini app runs inside <strong>Nimiq Pay</strong>. Open it there to send a NIM tip.
+            This mini app runs inside <strong>Nimiq Pay</strong>. The button below usually opens it there directly —
+            if it doesn't, open Nimiq Pay yourself, go to <strong>Mini Apps → Discover</strong>, and paste this
+            page's address (<span id="fallbackHost"></span>) into the search box.
         </p>
         <a class="open-btn" id="openInNimiqPayLink" href="#">
             Open in Nimiq Pay
@@ -280,7 +284,7 @@
 
     // TODO(brad): replace with your actual NIM receiving address
     // before this ever goes live.
-    const RECIPIENT_ADDRESS = "NQ48 TR5C AAV5 6CVM HDKA RJ40 CTLB 4PXD 3FXY";
+    const RECIPIENT_ADDRESS = "NQXX 0000 0000 0000 0000 0000 0000 0000 0000";
     const APP_NAME = "QuickProof Tip Jar";
 
     // The deeplink used by the fallback "Open in Nimiq Pay" button when
@@ -303,6 +307,11 @@
     const statusText = document.getElementById("statusText");
 
     openInNimiqPayLink.href = NIMIQ_PAY_DEEPLINK;
+
+    const fallbackHost = document.getElementById("fallbackHost");
+    if (fallbackHost) {
+        fallbackHost.textContent = window.location.host;
+    }
 
     let selectedAmount = null;
     let nimiq = null;
