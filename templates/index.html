@@ -195,7 +195,10 @@
     }
 
     .fallback a.open-btn {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
         background: var(--navy);
         color: #fff;
         text-decoration: none;
@@ -203,6 +206,27 @@
         font-size: 14px;
         padding: 13px 22px;
         border-radius: 12px;
+    }
+
+    .open-btn-spinner {
+        width: 18px;
+        height: 18px;
+        display: none;
+        flex: 0 0 auto;
+        animation: tjNimSpin .9s linear infinite;
+        /* Forces the icon to solid white regardless of its source colors —
+           brightness(0) collapses every opaque pixel to black, invert(1)
+           flips that to white. Safer than trusting the source SVG's own
+           colors sight-unseen against this dark navy button background. */
+        filter: brightness(0) invert(1);
+    }
+
+    .open-btn-spinner.active {
+        display: block;
+    }
+
+    @keyframes tjNimSpin {
+        to { transform: rotate(360deg); }
     }
 
     footer {
@@ -261,11 +285,11 @@
     ================================================= -->
     <div class="card fallback" id="fallbackCard" style="display:none;">
         <p>
-            This mini app runs inside <strong>Nimiq Pay</strong>. The button below usually opens it there directly —
-            if it doesn't, open Nimiq Pay yourself, go to <strong>Mini Apps → Discover</strong>, and paste this
-            page's address (<span id="fallbackHost"></span>) into the search box.
+            This mini app runs inside <strong>Nimiq Pay</strong>. Tap the button below to open it there —
+            if Nimiq Pay isn't installed yet, you'll be sent to the app store to get it first.
         </p>
         <a class="open-btn" id="openInNimiqPayLink" href="#">
+            <img class="open-btn-spinner" id="openInNimiqPaySpinner" src="https://nimiq.dev/logos/nimiq/hexagon-mono.svg" alt="">
             Open in Nimiq Pay
         </a>
     </div>
@@ -287,11 +311,15 @@
     const RECIPIENT_ADDRESS = "NQ48 TR5C AAV5 6CVM HDKA RJ40 CTLB 4PXD 3FXY";
     const APP_NAME = "QuickProof Tip Jar";
 
-    // The deeplink used by the fallback "Open in Nimiq Pay" button when
-    // this page is opened in a normal browser instead of inside Nimiq Pay.
-    // Replace MINIAPP_HOST once this is deployed to its real domain.
-    const MINIAPP_HOST = window.location.host;
+    // The "Open in Nimiq Pay" fallback button (shown when this page loads
+    // in a normal mobile browser instead of inside Nimiq Pay's WebView)
+    // tries the custom-scheme deeplink first. If Nimiq Pay isn't installed,
+    // that link fails silently — nothing navigates, nothing visibly
+    // happens — which is the signal used below to redirect to the right
+    // app store after a short wait instead of leaving the tap looking dead.
     const NIMIQ_PAY_DEEPLINK = `nimiqpay://miniapp?url=${encodeURIComponent(window.location.origin)}`;
+    const NIMIQ_PAY_IOS_STORE = "https://apps.apple.com/app/nimiq-pay/id6471844738";
+    const NIMIQ_PAY_ANDROID_STORE = "https://play.google.com/store/apps/details?id=com.nimiq.pay";
 
 
     // ==============================================
@@ -306,12 +334,36 @@
     const sendButton = document.getElementById("sendButton");
     const statusText = document.getElementById("statusText");
 
-    openInNimiqPayLink.href = NIMIQ_PAY_DEEPLINK;
+    openInNimiqPayLink.addEventListener("click", (e) => {
+        e.preventDefault();
 
-    const fallbackHost = document.getElementById("fallbackHost");
-    if (fallbackHost) {
-        fallbackHost.textContent = window.location.host;
-    }
+        const spinner = document.getElementById("openInNimiqPaySpinner");
+        if (spinner) spinner.classList.add("active");
+        openInNimiqPayLink.setAttribute("aria-busy", "true");
+
+        const ua = navigator.userAgent || "";
+        const isAndroid = /Android/.test(ua);
+        const storeUrl = isAndroid ? NIMIQ_PAY_ANDROID_STORE : NIMIQ_PAY_IOS_STORE;
+
+        let appOpened = false;
+        const markOpened = () => { appOpened = true; };
+        document.addEventListener("visibilitychange", markOpened, { once: true });
+        window.addEventListener("pagehide", markOpened, { once: true });
+        window.addEventListener("blur", markOpened, { once: true });
+
+        window.location.href = NIMIQ_PAY_DEEPLINK;
+
+        setTimeout(() => {
+            document.removeEventListener("visibilitychange", markOpened);
+            window.removeEventListener("pagehide", markOpened);
+            window.removeEventListener("blur", markOpened);
+            if (spinner) spinner.classList.remove("active");
+            openInNimiqPayLink.removeAttribute("aria-busy");
+            if (!appOpened) {
+                window.location.href = storeUrl;
+            }
+        }, 1500);
+    });
 
     let selectedAmount = null;
     let nimiq = null;
