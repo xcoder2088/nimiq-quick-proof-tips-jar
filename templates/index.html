@@ -161,6 +161,12 @@
         font-weight: 700;
     }
 
+    .custom-hint {
+        font-size: 11px;
+        color: var(--text-soft);
+        margin: -10px 2px 18px;
+    }
+
     .send-btn {
         width: 100%;
         border: none;
@@ -281,8 +287,9 @@
 
         <div class="custom-row">
             <input type="number" id="customAmount" placeholder="Custom amount" min="0" step="0.01" inputmode="decimal">
-            <span>NIM</span>
+            <span>USD</span>
         </div>
+        <div class="custom-hint" id="customAmountHint">Amount in USD</div>
 
         <button type="button" class="send-btn" id="sendButton" disabled>
             Send Tip
@@ -344,6 +351,7 @@
     const openInNimiqPayLink = document.getElementById("openInNimiqPayLink");
     const amountButtons = document.getElementById("amountButtons");
     const customAmount = document.getElementById("customAmount");
+    const customAmountHint = document.getElementById("customAmountHint");
     const sendButton = document.getElementById("sendButton");
     const statusText = document.getElementById("statusText");
 
@@ -440,8 +448,13 @@
         });
 
         if (!nimPriceUsd) {
-            setStatus("Couldn't load the current NIM price — custom amount still works below.", "err");
+            setStatus("Couldn't load the current NIM price. Please try again shortly.", "err");
         }
+
+        // A value may already be sitting in the custom field from while the
+        // price was still loading (it starts disabled-equivalent until
+        // nimPriceUsd is set) — re-check it now that the price is in.
+        evaluateCustomAmount();
     }
 
 
@@ -462,17 +475,39 @@
         sendButton.disabled = false;
     });
 
-    customAmount.addEventListener("input", () => {
-        [...amountButtons.children].forEach((b) => b.classList.remove("selected"));
+    // The custom field is USD, same as the preset buttons — updateCustomAmountHint
+    // shows the discreet "Amount in USD" reminder plus the live NIM
+    // equivalent underneath it once the price has loaded.
+    function updateCustomAmountHint() {
+        if (!customAmountHint) return;
 
-        const value = parseFloat(customAmount.value);
-        if (!isNaN(value) && value > 0) {
-            selectedAmount = value;
+        const usdValue = parseFloat(customAmount.value);
+        if (isNaN(usdValue) || usdValue <= 0) {
+            customAmountHint.textContent = "Amount in USD";
+        } else if (!nimPriceUsd) {
+            customAmountHint.textContent = "Amount in USD · price loading…";
+        } else {
+            const nim = usdToNim(usdValue);
+            customAmountHint.textContent =
+                `Amount in USD · ≈ ${nim.toLocaleString(undefined, { maximumFractionDigits: 2 })} NIM`;
+        }
+    }
+
+    function evaluateCustomAmount() {
+        const usdValue = parseFloat(customAmount.value);
+        if (!isNaN(usdValue) && usdValue > 0 && nimPriceUsd) {
+            selectedAmount = usdToNim(usdValue);
             sendButton.disabled = false;
         } else {
             selectedAmount = null;
             sendButton.disabled = true;
         }
+        updateCustomAmountHint();
+    }
+
+    customAmount.addEventListener("input", () => {
+        [...amountButtons.children].forEach((b) => b.classList.remove("selected"));
+        evaluateCustomAmount();
     });
 
 
