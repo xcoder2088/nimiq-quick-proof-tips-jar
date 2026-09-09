@@ -122,6 +122,19 @@
         color: #fff;
     }
 
+    .amount-btn:disabled {
+        opacity: .5;
+        cursor: not-allowed;
+    }
+
+    .amount-btn .nim-eq {
+        display: block;
+        font-size: 11px;
+        font-weight: 600;
+        opacity: .75;
+        margin-top: 3px;
+    }
+
     .custom-row {
         display: flex;
         align-items: center;
@@ -261,9 +274,9 @@
     <div class="card" id="tipCard" style="display:none;">
 
         <div class="amounts" id="amountButtons">
-            <button type="button" class="amount-btn" data-amount="1">1 NIM</button>
-            <button type="button" class="amount-btn" data-amount="5">5 NIM</button>
-            <button type="button" class="amount-btn" data-amount="10">10 NIM</button>
+            <button type="button" class="amount-btn" data-usd="5" disabled>$5<span class="nim-eq">…</span></button>
+            <button type="button" class="amount-btn" data-usd="10" disabled>$10<span class="nim-eq">…</span></button>
+            <button type="button" class="amount-btn" data-usd="50" disabled>$50<span class="nim-eq">…</span></button>
         </div>
 
         <div class="custom-row">
@@ -373,6 +386,63 @@
 
     let selectedAmount = null;
     let nimiq = null;
+    let nimPriceUsd = null;
+
+
+    // ==============================================
+    // NIM/USD PRICE — the three preset buttons are USD amounts ($5/$10/$50),
+    // so the actual NIM quantity sent depends on the live exchange rate.
+    // Fetched once per page load from CoinGecko's public, unauthenticated
+    // simple-price endpoint (no API key, CORS-enabled) — plenty fresh for a
+    // single tip during one session.
+    // ==============================================
+
+    async function fetchNimPriceUsd() {
+        try {
+            const res = await fetch(
+                "https://api.coingecko.com/api/v3/simple/price?ids=nimiq-2&vs_currencies=usd"
+            );
+            const data = await res.json();
+            const price = data && data["nimiq-2"] && data["nimiq-2"].usd;
+            if (typeof price === "number" && price > 0) return price;
+        } catch (error) {
+            console.error("Failed to fetch NIM price:", error);
+        }
+        return null;
+    }
+
+    // usdToNim rounds to whole Luna (1 NIM = 100,000 Luna, same unit
+    // sendTip already converts to) so the button's displayed NIM amount is
+    // exactly what sendBasicTransaction will actually send — no rounding
+    // drift between what's shown and what's charged.
+    function usdToNim(usd) {
+        return Math.round((usd / nimPriceUsd) * 1e5) / 1e5;
+    }
+
+    async function loadAmountButtons() {
+        nimPriceUsd = await fetchNimPriceUsd();
+
+        [...amountButtons.children].forEach((btn) => {
+            const usd = parseFloat(btn.dataset.usd);
+            const nimEq = btn.querySelector(".nim-eq");
+
+            if (!nimPriceUsd) {
+                if (nimEq) nimEq.textContent = "price unavailable";
+                return;
+            }
+
+            const nim = usdToNim(usd);
+            if (nimEq) {
+                nimEq.textContent = `≈ ${nim.toLocaleString(undefined, { maximumFractionDigits: 2 })} NIM`;
+            }
+            btn.dataset.amount = String(nim);
+            btn.disabled = false;
+        });
+
+        if (!nimPriceUsd) {
+            setStatus("Couldn't load the current NIM price — custom amount still works below.", "err");
+        }
+    }
 
 
     // ==============================================
@@ -381,7 +451,7 @@
 
     amountButtons.addEventListener("click", (e) => {
         const btn = e.target.closest(".amount-btn");
-        if (!btn) return;
+        if (!btn || btn.disabled || !btn.dataset.amount) return;
 
         customAmount.value = "";
 
@@ -476,6 +546,8 @@
 
             tipCard.style.display = "block";
             fallbackCard.style.display = "none";
+
+            loadAmountButtons();
 
         } catch (error) {
             console.error("Failed to init Nimiq Mini App SDK:", error);
