@@ -334,9 +334,10 @@
     const sendButton = document.getElementById("sendButton");
     const statusText = document.getElementById("statusText");
 
-    openInNimiqPayLink.addEventListener("click", (e) => {
-        e.preventDefault();
-
+    // Shared by the manual button tap AND the automatic attempt on load
+    // (see boot() below) — same deeplink-then-store-fallback dance either
+    // way, just triggered differently.
+    function tryOpenNimiqPay() {
         const spinner = document.getElementById("openInNimiqPaySpinner");
         if (spinner) spinner.classList.add("active");
         openInNimiqPayLink.setAttribute("aria-busy", "true");
@@ -363,6 +364,11 @@
                 window.location.href = storeUrl;
             }
         }, 1500);
+    }
+
+    openInNimiqPayLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        tryOpenNimiqPay();
     });
 
     let selectedAmount = null;
@@ -452,6 +458,15 @@
         if (!window.nimiqPay) {
             fallbackCard.style.display = "block";
             tipCard.style.display = "none";
+
+            // A tap on the donation-ask push notification lands here from
+            // a regular browser, not from inside Nimiq Pay — attempt the
+            // handoff right away instead of making the user tap "Open in
+            // Nimiq Pay" themselves. The button stays visible as a manual
+            // retry in case this automatic attempt gets silently blocked
+            // (e.g. a browser that restricts custom-scheme navigation to
+            // direct user gestures).
+            tryOpenNimiqPay();
             return;
         }
 
