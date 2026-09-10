@@ -4,19 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NIM Tip Jar — QuickProof</title>
-<meta name="theme-color" content="#061A3A">
+<meta name="theme-color" content="#1F2348">
 <link rel="icon" type="image/png" sizes="512x512" href="/static/icons/tip-jar-icon-512.png">
 <link rel="apple-touch-icon" href="/static/icons/tip-jar-icon-512.png">
 <style>
     :root {
+        /* Real Nimiq brand colors (from nimiq.dev/design-kit's own
+           hexagon.svg / horizontal.svg — the gold gradient stops and the
+           wordmark's navy), not the arbitrary green this page used
+           before. Variable names kept close to the originals so the
+           rules below didn't all need renaming, just re-pointing. */
         --bg: #ffffff;
-        --bg-soft: #F2FAF4;
-        --navy: #061A3A;
-        --green: #017424;
-        --green-deep: #0A4A1C;
-        --green-neon: #00F84A;
-        --green-border: #BFE8C8;
-        --green-hover: #E5F6E9;
+        --bg-soft: #FFF8EC;
+        --navy: #1F2348;
+        --green: #EC991C;
+        --green-gradient: linear-gradient(135deg, #EC991C, #E9B213);
+        --green-gradient-hover: linear-gradient(135deg, #D6850F, #D19F0A);
+        --green-deep: #C97A0A;
+        --green-border: #F6D999;
+        --green-hover: #FDEFD3;
         --text: #111827;
         --text-soft: #6B7280;
         --border: #E5E7EB;
@@ -102,7 +108,10 @@
     .amount-btn {
         border: 1.5px solid var(--green-border);
         background: var(--bg-soft);
-        color: var(--green);
+        /* Navy, not gold, for the unselected text — gold-on-cream text
+           reads too low-contrast to be comfortable at this size (the
+           gold is meant for fills/accents, not body-sized text). */
+        color: var(--navy);
         font-size: 15px;
         font-weight: 700;
         padding: 14px 6px;
@@ -117,7 +126,7 @@
     }
 
     .amount-btn.selected {
-        background: var(--green);
+        background: var(--green-gradient);
         border-color: var(--green-deep);
         color: #fff;
     }
@@ -170,7 +179,7 @@
     .send-btn {
         width: 100%;
         border: none;
-        background: var(--green);
+        background: var(--green-gradient);
         color: #fff;
         font-size: 16px;
         font-weight: 800;
@@ -186,7 +195,7 @@
     }
 
     .send-btn:not(:disabled):hover {
-        background: var(--green-deep);
+        background: var(--green-gradient-hover);
     }
 
     .status {
@@ -197,7 +206,7 @@
         min-height: 18px;
     }
 
-    .status.ok { color: var(--green); font-weight: 600; }
+    .status.ok { color: var(--navy); font-weight: 600; }
     .status.err { color: #B3261E; font-weight: 600; }
     .status.info { color: var(--text-soft); }
 
@@ -256,7 +265,7 @@
         line-height: 1.6;
     }
 
-    footer a { color: var(--green); }
+    footer a { color: var(--navy); }
 </style>
 </head>
 <body>
