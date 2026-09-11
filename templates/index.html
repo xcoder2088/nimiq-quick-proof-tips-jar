@@ -277,7 +277,7 @@
         QuickProof
     </span>
     <img class="hero-icon" src="/static/icons/tip-jar-icon-512.png" alt="Tip jar">
-    <h1>Tip the developer</h1>
+    <h1 id="h1">Tip the developer</h1>
     <p class="subtitle" id="subtitle">
         QuickProof is a free tool for logistics teams. If it's saving you time,
         a small NIM tip helps keep it running and improving.
@@ -313,19 +313,19 @@
          (not inside Nimiq Pay's WebView)
     ================================================= -->
     <div class="card fallback" id="fallbackCard" style="display:none;">
-        <p>
+        <p id="fallbackText">
             This mini app runs inside <strong>Nimiq Pay</strong>. Tap the button below to open it there —
             if Nimiq Pay isn't installed yet, you'll be sent to the app store to get it first.
         </p>
         <a class="open-btn" id="openInNimiqPayLink" href="#">
             <img class="open-btn-spinner" id="openInNimiqPaySpinner" src="https://nimiq.dev/logos/nimiq/hexagon-mono.svg" alt="">
-            Open in Nimiq Pay
+            <span id="openInNimiqPayLabel">Open in Nimiq Pay</span>
         </a>
     </div>
 
     <footer>
-        Powered by <a href="https://quickquotetool.ca" target="_blank" rel="noopener">QuickQuoteTool.ca</a>
-        · for Nimiq Mini Apps
+        <span id="poweredBy">Powered by</span> <a href="https://quickquotetool.ca" target="_blank" rel="noopener">QuickQuoteTool.ca</a>
+        <span id="footerSuffix">· for Nimiq Mini Apps</span>
     </footer>
 
 </div>
@@ -339,6 +339,103 @@
     // before this ever goes live.
     const RECIPIENT_ADDRESS = "NQ48 TR5C AAV5 6CVM HDKA RJ40 CTLB 4PXD 3FXY";
     const APP_NAME = "QuickProof Tip Jar";
+
+    // ==============================================
+    // LANGUAGE — mirrors the TEXT/detectLang pattern used across the
+    // rest of QuickProof (main app + legal pages): detect the browser's
+    // language, fall back to English if unsupported.
+    // ==============================================
+    const TEXT = {
+      en: {
+        pageTitle:"NIM Tip Jar — QuickProof",
+        h1:"Tip the developer",
+        subtitle:"QuickProof is a free tool for logistics teams. If it's saving you time, a small NIM tip helps keep it running and improving.",
+        sendButton:"Send Tip",
+        openInNimiqPayLabel:"Open in Nimiq Pay",
+        fallbackText:"This mini app runs inside <strong>Nimiq Pay</strong>. Tap the button below to open it there — if Nimiq Pay isn't installed yet, you'll be sent to the app store to get it first.",
+        poweredBy:"Powered by", footerSuffix:"· for Nimiq Mini Apps",
+        customAmountPlaceholder:"Custom amount", priceUnavailable:"price unavailable",
+        priceLoadError:"Couldn't load the current NIM price. Please try again shortly.",
+        waitingConfirmation:"Waiting for confirmation…", thanks:"Thank you for the tip! 🎉",
+        cancelled:"Tip cancelled.", genericError:"Something went wrong. Please try again.",
+        customAmountHintIdle:"Amount in USD", customAmountHintLoading:"Amount in USD · price loading…",
+        customAmountHintWithNim:nim=>`Amount in USD · ≈ ${nim} NIM`
+      },
+      fr: {
+        pageTitle:"Pourboire NIM — QuickProof",
+        h1:"Donnez un pourboire au développeur",
+        subtitle:"QuickProof est un outil gratuit pour les équipes logistiques. S'il vous fait gagner du temps, un petit pourboire en NIM aide à le maintenir et à l'améliorer.",
+        sendButton:"Envoyer le pourboire",
+        openInNimiqPayLabel:"Ouvrir dans Nimiq Pay",
+        fallbackText:"Cette mini-application fonctionne à l'intérieur de <strong>Nimiq Pay</strong>. Appuyez sur le bouton ci-dessous pour l'ouvrir — si Nimiq Pay n'est pas encore installé, vous serez dirigé vers la boutique d'applications pour l'obtenir d'abord.",
+        poweredBy:"Propulsé par", footerSuffix:"· pour les mini-applications Nimiq",
+        customAmountPlaceholder:"Montant personnalisé", priceUnavailable:"prix indisponible",
+        priceLoadError:"Impossible de charger le prix actuel du NIM. Veuillez réessayer sous peu.",
+        waitingConfirmation:"En attente de confirmation…", thanks:"Merci pour votre pourboire ! 🎉",
+        cancelled:"Pourboire annulé.", genericError:"Une erreur est survenue. Veuillez réessayer.",
+        customAmountHintIdle:"Montant en USD", customAmountHintLoading:"Montant en USD · prix en cours de chargement…",
+        customAmountHintWithNim:nim=>`Montant en USD · ≈ ${nim} NIM`
+      },
+      es: {
+        pageTitle:"Propina NIM — QuickProof",
+        h1:"Dale una propina al desarrollador",
+        subtitle:"QuickProof es una herramienta gratuita para equipos de logística. Si le está ahorrando tiempo, una pequeña propina en NIM ayuda a mantenerlo funcionando y mejorando.",
+        sendButton:"Enviar propina",
+        openInNimiqPayLabel:"Abrir en Nimiq Pay",
+        fallbackText:"Esta mini aplicación funciona dentro de <strong>Nimiq Pay</strong>. Toque el botón de abajo para abrirla allí — si Nimiq Pay aún no está instalado, se le enviará a la tienda de aplicaciones para obtenerlo primero.",
+        poweredBy:"Desarrollado por", footerSuffix:"· para mini aplicaciones de Nimiq",
+        customAmountPlaceholder:"Monto personalizado", priceUnavailable:"precio no disponible",
+        priceLoadError:"No se pudo cargar el precio actual de NIM. Por favor, inténtelo de nuevo en breve.",
+        waitingConfirmation:"Esperando confirmación…", thanks:"¡Gracias por su propina! 🎉",
+        cancelled:"Propina cancelada.", genericError:"Algo salió mal. Por favor, inténtelo de nuevo.",
+        customAmountHintIdle:"Monto en USD", customAmountHintLoading:"Monto en USD · cargando precio…",
+        customAmountHintWithNim:nim=>`Monto en USD · ≈ ${nim} NIM`
+      },
+      de: {
+        pageTitle:"NIM-Trinkgeld — QuickProof",
+        h1:"Trinkgeld für den Entwickler",
+        subtitle:"QuickProof ist ein kostenloses Tool für Logistikteams. Wenn es Ihnen Zeit spart, hilft ein kleines NIM-Trinkgeld dabei, es am Laufen zu halten und zu verbessern.",
+        sendButton:"Trinkgeld senden",
+        openInNimiqPayLabel:"In Nimiq Pay öffnen",
+        fallbackText:"Diese Mini-App läuft innerhalb von <strong>Nimiq Pay</strong>. Tippen Sie auf die Schaltfläche unten, um sie dort zu öffnen — falls Nimiq Pay noch nicht installiert ist, werden Sie zuerst zum App Store weitergeleitet.",
+        poweredBy:"Bereitgestellt von", footerSuffix:"· für Nimiq Mini-Apps",
+        customAmountPlaceholder:"Benutzerdefinierter Betrag", priceUnavailable:"Preis nicht verfügbar",
+        priceLoadError:"Der aktuelle NIM-Preis konnte nicht geladen werden. Bitte versuchen Sie es in Kürze erneut.",
+        waitingConfirmation:"Warte auf Bestätigung…", thanks:"Danke für Ihr Trinkgeld! 🎉",
+        cancelled:"Trinkgeld abgebrochen.", genericError:"Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+        customAmountHintIdle:"Betrag in USD", customAmountHintLoading:"Betrag in USD · Preis wird geladen…",
+        customAmountHintWithNim:nim=>`Betrag in USD · ≈ ${nim} NIM`
+      },
+      zh: {
+        pageTitle:"NIM 打赏 — QuickProof",
+        h1:"给开发者打赏",
+        subtitle:"QuickProof 是一款为物流团队提供的免费工具。如果它为您节省了时间，一点 NIM 打赏能帮助它持续运行和改进。",
+        sendButton:"发送打赏",
+        openInNimiqPayLabel:"在 Nimiq Pay 中打开",
+        fallbackText:"此小程序运行在 <strong>Nimiq Pay</strong> 内。点击下方按钮在其中打开——如果尚未安装 Nimiq Pay，系统会先引导您前往应用商店进行安装。",
+        poweredBy:"技术支持：", footerSuffix:"· 面向 Nimiq 小程序",
+        customAmountPlaceholder:"自定义金额", priceUnavailable:"价格不可用",
+        priceLoadError:"无法加载当前的 NIM 价格，请稍后重试。",
+        waitingConfirmation:"等待确认…", thanks:"感谢您的打赏！🎉",
+        cancelled:"打赏已取消。", genericError:"出了点问题，请重试。",
+        customAmountHintIdle:"金额（美元）", customAmountHintLoading:"金额（美元）· 价格加载中…",
+        customAmountHintWithNim:nim=>`金额（美元）· ≈ ${nim} NIM`
+      }
+    };
+
+    function detectLang() {
+        const langs = navigator.languages || [navigator.language || "en"];
+        for (const item of langs) {
+            const code = String(item).toLowerCase().split("-")[0];
+            if (TEXT[code]) return code;
+        }
+        return "en";
+    }
+
+    const lang = detectLang();
+    const t = TEXT[lang] || TEXT.en;
+    document.documentElement.lang = lang;
+    document.title = t.pageTitle;
 
     // The "Open in Nimiq Pay" fallback button (shown when this page loads
     // in a normal mobile browser instead of inside Nimiq Pay's WebView)
@@ -363,6 +460,16 @@
     const customAmountHint = document.getElementById("customAmountHint");
     const sendButton = document.getElementById("sendButton");
     const statusText = document.getElementById("statusText");
+
+    // Apply the detected-language strings to the static markup.
+    document.getElementById("h1").textContent = t.h1;
+    document.getElementById("subtitle").textContent = t.subtitle;
+    sendButton.textContent = t.sendButton;
+    document.getElementById("openInNimiqPayLabel").textContent = t.openInNimiqPayLabel;
+    document.getElementById("fallbackText").innerHTML = t.fallbackText;
+    document.getElementById("poweredBy").textContent = t.poweredBy;
+    document.getElementById("footerSuffix").textContent = t.footerSuffix;
+    customAmount.placeholder = t.customAmountPlaceholder;
 
     // Shared by the manual button tap AND the automatic attempt on load
     // (see boot() below) — same deeplink-then-store-fallback dance either
@@ -444,7 +551,7 @@
             const nimEq = btn.querySelector(".nim-eq");
 
             if (!nimPriceUsd) {
-                if (nimEq) nimEq.textContent = "price unavailable";
+                if (nimEq) nimEq.textContent = t.priceUnavailable;
                 return;
             }
 
@@ -457,7 +564,7 @@
         });
 
         if (!nimPriceUsd) {
-            setStatus("Couldn't load the current NIM price. Please try again shortly.", "err");
+            setStatus(t.priceLoadError, "err");
         }
 
         // A value may already be sitting in the custom field from while the
@@ -492,13 +599,13 @@
 
         const usdValue = parseFloat(customAmount.value);
         if (isNaN(usdValue) || usdValue <= 0) {
-            customAmountHint.textContent = "Amount in USD";
+            customAmountHint.textContent = t.customAmountHintIdle;
         } else if (!nimPriceUsd) {
-            customAmountHint.textContent = "Amount in USD · price loading…";
+            customAmountHint.textContent = t.customAmountHintLoading;
         } else {
             const nim = usdToNim(usdValue);
             customAmountHint.textContent =
-                `Amount in USD · ≈ ${nim.toLocaleString(undefined, { maximumFractionDigits: 2 })} NIM`;
+                t.customAmountHintWithNim(nim.toLocaleString(undefined, { maximumFractionDigits: 2 }));
         }
     }
 
@@ -533,7 +640,7 @@
         if (!nimiq || !selectedAmount) return;
 
         sendButton.disabled = true;
-        setStatus("Waiting for confirmation…", "info");
+        setStatus(t.waitingConfirmation, "info");
 
         try {
             const result = await nimiq.sendBasicTransaction({
@@ -541,14 +648,14 @@
                 value: Math.round(selectedAmount * 1e5), // NIM -> Luna
             });
 
-            setStatus("Thank you for the tip! 🎉", "ok");
+            setStatus(t.thanks, "ok");
             console.log("Tip sent:", result);
 
         } catch (error) {
             if (error && error.message === "Request was cancelled") {
-                setStatus("Tip cancelled.", "info");
+                setStatus(t.cancelled, "info");
             } else {
-                setStatus("Something went wrong. Please try again.", "err");
+                setStatus(t.genericError, "err");
                 console.error(error);
             }
         } finally {
