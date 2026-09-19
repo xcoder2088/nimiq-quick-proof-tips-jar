@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NIM Tip Jar — QuickProof</title>
 <meta name="theme-color" content="#1F2348">
-<link rel="icon" type="image/png" sizes="512x512" href="/static/icons/tip-jar-icon-512.png">
-<link rel="apple-touch-icon" href="/static/icons/tip-jar-icon-512.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/static/icons/tip-jar-icon.png">
+<link rel="apple-touch-icon" href="/static/icons/tip-jar-icon.png">
 <style>
     :root {
         /* Real Nimiq brand colors (from nimiq.dev/design-kit's own
@@ -47,33 +47,44 @@
         max-width: 420px;
     }
 
-    .badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
+    .qp-header {
+        text-align: center;
+        margin-bottom: 22px;
+    }
+
+    .qp-logo {
+        width: 96px;
+        height: 96px;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto 4px;
+    }
+
+    .qp-wordmark {
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+    }
+
+    .qp-quick { color: var(--text); }
+    .qp-proof { color: #017424; }
+
+    .qp-tagline {
+        font-size: 14px;
+        color: var(--text-soft);
+        margin-top: 2px;
+    }
+
+    .qp-powered {
         font-size: 12px;
+        color: var(--text-soft);
+        margin-top: 4px;
+    }
+
+    .qp-powered a {
+        color: #017424;
         font-weight: 700;
-        color: var(--navy);
-        background: #fff;
-        border: 1px solid var(--border);
-        padding: 5px 12px 5px 5px;
-        border-radius: 999px;
-        margin-bottom: 18px;
-    }
-
-    .badge img {
-        width: 20px;
-        height: 20px;
-        border-radius: 6px;
-        display: block;
-    }
-
-    .hero-icon {
-        width: 64px;
-        height: 64px;
-        border-radius: 18px;
-        margin-bottom: 10px;
-        display: block;
+        text-decoration: none;
     }
 
     h1 {
@@ -227,13 +238,18 @@
         align-items: center;
         justify-content: center;
         gap: 9px;
-        background: var(--navy);
+        background: var(--green-gradient);
         color: #fff;
         text-decoration: none;
         font-weight: 700;
         font-size: 14px;
         padding: 13px 22px;
         border-radius: 12px;
+        transition: .12s;
+    }
+
+    .fallback a.open-btn:hover {
+        background: var(--green-gradient-hover);
     }
 
     .open-btn-spinner {
@@ -272,11 +288,13 @@
 
 <div class="wrap">
 
-    <span class="badge">
-        <img src="/static/icons/quickproof-logo-512.png" alt="">
-        QuickProof
-    </span>
-    <img class="hero-icon" src="/static/icons/tip-jar-icon-512.png" alt="Tip jar">
+    <div class="qp-header">
+        <img class="qp-logo" src="/static/icons/tip-jar-icon.png" alt="QuickProof">
+        <div class="qp-wordmark"><span class="qp-quick">Quick</span><span class="qp-proof">Proof</span></div>
+        <div class="qp-tagline">Snap it, prove it, send it.</div>
+        <div class="qp-powered">Powered by <a href="https://quickquotetool.ca" target="_blank" rel="noopener">QuickQuoteTool</a></div>
+    </div>
+
     <h1 id="h1">Tip the developer</h1>
     <p class="subtitle" id="subtitle">
         QuickProof is a free tool for logistics teams. If it's saving you time,
@@ -349,7 +367,7 @@
       en: {
         pageTitle:"NIM Tip Jar — QuickProof",
         h1:"Tip the developer",
-        subtitle:"QuickProof is a free tool for logistics teams. If it's saving you time, a small NIM tip helps keep it running and improving.",
+        subtitle:"QuickProof is a free tool for archiving proof. If it's saving you time, a small NIM tip would help us keep the server running and improving.",
         sendButton:"Send Tip",
         openInNimiqPayLabel:"Open in Nimiq Pay",
         fallbackText:"This mini app runs inside <strong>Nimiq Pay</strong>. Tap the button below to open it there — if Nimiq Pay isn't installed yet, you'll be sent to the app store to get it first.",
@@ -364,7 +382,7 @@
       fr: {
         pageTitle:"Pourboire NIM — QuickProof",
         h1:"Donnez un pourboire au développeur",
-        subtitle:"QuickProof est un outil gratuit pour les équipes logistiques. S'il vous fait gagner du temps, un petit pourboire en NIM aide à le maintenir et à l'améliorer.",
+        subtitle:"QuickProof est un outil gratuit pour archiver vos preuves. S'il vous fait gagner du temps, un petit pourboire en NIM nous aiderait à garder le serveur en marche et à l'améliorer.",
         sendButton:"Envoyer le pourboire",
         openInNimiqPayLabel:"Ouvrir dans Nimiq Pay",
         fallbackText:"Cette mini-application fonctionne à l'intérieur de <strong>Nimiq Pay</strong>. Appuyez sur le bouton ci-dessous pour l'ouvrir — si Nimiq Pay n'est pas encore installé, vous serez dirigé vers la boutique d'applications pour l'obtenir d'abord.",
@@ -379,7 +397,7 @@
       es: {
         pageTitle:"Propina NIM — QuickProof",
         h1:"Dale una propina al desarrollador",
-        subtitle:"QuickProof es una herramienta gratuita para equipos de logística. Si le está ahorrando tiempo, una pequeña propina en NIM ayuda a mantenerlo funcionando y mejorando.",
+        subtitle:"QuickProof es una herramienta gratuita para archivar comprobantes. Si le está ahorrando tiempo, una pequeña propina en NIM nos ayudaría a mantener el servidor funcionando y mejorando.",
         sendButton:"Enviar propina",
         openInNimiqPayLabel:"Abrir en Nimiq Pay",
         fallbackText:"Esta mini aplicación funciona dentro de <strong>Nimiq Pay</strong>. Toque el botón de abajo para abrirla allí — si Nimiq Pay aún no está instalado, se le enviará a la tienda de aplicaciones para obtenerlo primero.",
@@ -394,7 +412,7 @@
       de: {
         pageTitle:"NIM-Trinkgeld — QuickProof",
         h1:"Trinkgeld für den Entwickler",
-        subtitle:"QuickProof ist ein kostenloses Tool für Logistikteams. Wenn es Ihnen Zeit spart, hilft ein kleines NIM-Trinkgeld dabei, es am Laufen zu halten und zu verbessern.",
+        subtitle:"QuickProof ist ein kostenloses Tool zur Dokumentation von Nachweisen. Wenn es Ihnen Zeit spart, würde uns ein kleines NIM-Trinkgeld helfen, den Server am Laufen zu halten und zu verbessern.",
         sendButton:"Trinkgeld senden",
         openInNimiqPayLabel:"In Nimiq Pay öffnen",
         fallbackText:"Diese Mini-App läuft innerhalb von <strong>Nimiq Pay</strong>. Tippen Sie auf die Schaltfläche unten, um sie dort zu öffnen — falls Nimiq Pay noch nicht installiert ist, werden Sie zuerst zum App Store weitergeleitet.",
@@ -409,7 +427,7 @@
       zh: {
         pageTitle:"NIM 打赏 — QuickProof",
         h1:"给开发者打赏",
-        subtitle:"QuickProof 是一款为物流团队提供的免费工具。如果它为您节省了时间，一点 NIM 打赏能帮助它持续运行和改进。",
+        subtitle:"QuickProof 是一款用于存档凭证的免费工具。如果它为您节省了时间，一点 NIM 打赏将帮助我们维持服务器运行并持续改进。",
         sendButton:"发送打赏",
         openInNimiqPayLabel:"在 Nimiq Pay 中打开",
         fallbackText:"此小程序运行在 <strong>Nimiq Pay</strong> 内。点击下方按钮在其中打开——如果尚未安装 Nimiq Pay，系统会先引导您前往应用商店进行安装。",
@@ -424,6 +442,8 @@
     };
 
     function detectLang() {
+        const forced = new URLSearchParams(window.location.search).get("lang");
+        if (forced && TEXT[forced.toLowerCase()]) return forced.toLowerCase();
         const langs = navigator.languages || [navigator.language || "en"];
         for (const item of langs) {
             const code = String(item).toLowerCase().split("-")[0];
