@@ -655,8 +655,33 @@
     // Values are in Luna (1 NIM = 100,000 Luna).
     // ==============================================
 
+    function previewWallet() {
+        if (!selectedAmount) return;
+        const copy = {
+          fr:["Aperçu de confirmation Nimiq","Simulation — aucun wallet connecté","Bénéficiaire","Montant","Confirmer (simulation)","Annuler","Simulation terminée : aucun NIM envoyé.","Simulation annulée."],
+          en:["Nimiq confirmation preview","Simulation — no wallet connected","Recipient","Amount","Confirm (simulation)","Cancel","Simulation complete: no NIM sent.","Simulation cancelled."],
+          es:["Vista previa de confirmación Nimiq","Simulación — sin wallet conectado","Destinatario","Importe","Confirmar (simulación)","Cancelar","Simulación completada: sin NIM enviado.","Simulación cancelada."],
+          de:["Nimiq-Bestätigung Vorschau","Simulation — kein Wallet verbunden","Empfänger","Betrag","Bestätigen (Simulation)","Abbrechen","Simulation abgeschlossen: keine NIM gesendet.","Simulation abgebrochen."],
+          zh:["Nimiq 确认预览","模拟 — 未连接钱包","收款人","金额","确认（模拟）","取消","模拟完成：未发送 NIM。","模拟已取消。"]
+        }[lang] || ["Nimiq confirmation preview","Simulation — no wallet connected","Recipient","Amount","Confirm (simulation)","Cancel","Simulation complete: no NIM sent.","Simulation cancelled."];
+        const modal=document.createElement("dialog");
+        modal.setAttribute("aria-label",copy[0]);
+        modal.style.cssText="box-sizing:border-box;max-width:calc(100vw - 24px);width:360px;border:1px solid #59647a;border-radius:22px;background:#263143;color:#fff;padding:24px;font:14px system-ui";
+        const title=document.createElement("h2");title.textContent=copy[0];title.style.fontSize="18px";
+        const note=document.createElement("p");note.textContent=copy[1];note.style.cssText="color:#ffd79e;font-size:12px;line-height:1.5";
+        const recipient=document.createElement("p");recipient.textContent=copy[2]+": "+RECIPIENT_ADDRESS;recipient.style.cssText="font-size:12px;overflow-wrap:anywhere;line-height:1.6";
+        const amount=document.createElement("p");amount.textContent=copy[3]+": "+selectedAmount.toLocaleString(undefined,{maximumFractionDigits:5})+" NIM";
+        const confirm=document.createElement("button");confirm.type="button";confirm.textContent=copy[4];confirm.style.cssText="width:100%;border:0;border-radius:20px;padding:13px;color:#fff;background:#0784e9;font-weight:700";
+        const cancel=document.createElement("button");cancel.type="button";cancel.textContent=copy[5];cancel.style.cssText="width:100%;border:0;background:transparent;padding:13px;color:#d7e1ef";
+        confirm.onclick=()=>{setStatus(copy[6],"info");modal.close()};
+        cancel.onclick=()=>{setStatus(copy[7],"info");modal.close()};
+        modal.addEventListener("close",()=>modal.remove());
+        modal.append(title,note,recipient,amount,confirm,cancel);document.body.append(modal);modal.showModal();
+    }
+
+
     async function sendTip() {
-        if (PREVIEW) { setStatus(lang === "fr" ? "Aperçu : aucune transaction réelle." : "Preview: no real transaction.", "info"); return; }
+        if (PREVIEW) { previewWallet(); return; }
         if (!nimiq || !selectedAmount) return;
 
         sendButton.disabled = true;
