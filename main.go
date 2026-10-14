@@ -7,12 +7,17 @@ import (
 )
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
+	if r.URL.Path != "/" && r.URL.Path != "/phoenix" {
 		http.NotFound(w, r)
 		return
 	}
 
-	// Without this, Nimiq Pay's embedded mini-app WebView (or any other
+	if r.URL.Path == "/phoenix" {
+        w.Header().Set("Cache-Control","no-cache")
+        http.ServeFile(w,r,"./templates/phoenix.html")
+        return
+    }
+    // Without this, Nimiq Pay's embedded mini-app WebView (or any other
 	// intermediate cache) can keep serving a stale copy of this page
 	// indefinitely after a content update, since http.ServeFile alone
 	// doesn't forbid caching — exactly what happened with the old
